@@ -127,7 +127,16 @@ await server.close();
 
 ## Performance
 
-`npm run bench` runs 50 concurrent clients pipelining 16 commands each, with client and server **in the same Node process** (so the clients' CPU use is counted against the server):
+Measured with the **official `redis-benchmark`** (100k requests, pipeline depth 16), run in CI on a standard GitHub Actions Ubuntu runner:
+
+| Command | requests/sec | p50 latency |
+| --- | --- | --- |
+| GET | **480,769** | 1.42 ms |
+| INCR | **291,545** | 1.49 ms |
+| SET | **276,243** | 2.38 ms |
+| LPUSH | **222,222** | 1.57 ms |
+
+The bundled `npm run bench` runs 50 concurrent JavaScript clients pipelining 16 commands each, with client and server **in the same Node process**. The clients' CPU use is counted against the server, so these numbers are much lower than with the C benchmark:
 
 | Command | ops/sec |
 | --- | --- |
@@ -136,7 +145,7 @@ await server.close();
 | INCR | ~38,000 |
 | LPUSH | ~43,000 |
 
-A single client pipelining 100k commands reaches **~62,000 ops/sec**, with a sequential round-trip latency of about **0.15 ms**. Measured on Node 25, Windows 11, on a laptop. The CI job also runs the official `redis-benchmark` and prints its results in the job log.
+A single client pipelining 100k commands reaches **~62,000 ops/sec**, with a sequential round-trip latency of about **0.15 ms**. Measured on Node 25, Windows 11, on a laptop.
 
 Two optimizations came out of profiling:
 
