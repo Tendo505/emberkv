@@ -1,0 +1,24 @@
+{
+  "name": "emberkv",
+  "version": "1.0.0",
+  "description": "A Redis-compatible in-memory data store written from scratch in Node.js. Speaks RESP, works with redis-cli and standard Redis clients.",
+  "type": "module",
+  "bin": {
+    "emberkv": "bin/emberkv.js"
+  },
+  "main": "src/server.js",
+  "exports": {
+    ".": "./src/server.js",
+    "./client": "./src/client.js"
+  },
+  "scripts": {
+    "start": "node bin/emberkv.js",
+    "test": "node --test",
+    "bench": "node bin/bench.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": ["redis", "resp", "key-value", "database", "in-memory", "pubsub"],
+  "license": "MIT"
+}
