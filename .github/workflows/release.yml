@@ -1,0 +1,41 @@
+name: Release
+
+# Pushing a tag like v1.0.0 builds the download, checks that it starts and answers, and publishes it.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, check and publish the download
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Build the download
+        run: npm pack
+      - name: Check the download runs
+        shell: bash
+        run: |
+          npm install -g ./emberkv-1.0.0.tgz
+          emberkv --port 6390 &
+          sleep 2
+          reply=$(printf 'PING\r\n' | timeout 5 bash -c 'exec 3<>/dev/tcp/127.0.0.1/6390; cat >&3; head -c 7 <&3')
+          echo "$reply"
+          [[ "$reply" == "+PONG"* ]]
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > release-notes.md <<'NOTES'
+          The Redis-compatible server, packaged. Needs Node.js 20 or newer; it has no dependencies.
+
+          1. Download **emberkv-1.0.0.tgz** below.
+          2. Install it: `npm install -g emberkv-1.0.0.tgz`.
+          3. Run `emberkv`. It listens on 127.0.0.1:6379: try `redis-cli ping`, or any Redis client.
+          NOTES
+          gh release create "$GITHUB_REF_NAME" emberkv-1.0.0.tgz --repo "$GITHUB_REPOSITORY" --title "EmberKV $GITHUB_REF_NAME" --notes-file release-notes.md
