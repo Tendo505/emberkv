@@ -7,6 +7,10 @@
 
 A **Redis-compatible in-memory data store**, written from scratch in Node.js with zero dependencies.
 
+<p align="center">
+  <img src="docs/overview.png" width="760" alt="emberkv overview: example usage and architecture">
+</p>
+
 emberkv speaks the real Redis wire protocol (RESP), so the official `redis-cli`, `redis-benchmark`, and standard Redis client libraries connect to it unchanged. It supports strings, lists, hashes, key expiry, transactions, pub/sub, and snapshot persistence.
 
 ```console
