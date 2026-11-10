@@ -1,0 +1,9 @@
+.git
+.github
+node_modules
+docs
+test
+*.md
+dump.json
+*.tmp-*
+*.cpuprofile
